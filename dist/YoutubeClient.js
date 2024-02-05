@@ -61,7 +61,7 @@ class YoutubeClient {
         `https://www.youtube.com/api/timedtext?v=${this.v}${this.urlPath}&lang=${hl}&fmt=json3`,
         { responseType: "text" }
       );
-      const json = JSON.parse(timedText.data).events.map((event) => {
+      const json = timedText.data.events.map((event) => {
         return {
           start: event.tStartMs,
           dur: event.dDurationMs,
