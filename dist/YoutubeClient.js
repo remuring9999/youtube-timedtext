@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
+const xml2js_1 = require("xml2js");
 class YoutubeClient {
     constructor() {
         this.client = axios_1.default.create({
@@ -68,7 +69,31 @@ class YoutubeClient {
             };
         }
         catch (error) {
-            // console.error(error);
+            console.error(error);
+            return {
+                success: false,
+            };
+        }
+    }
+    async getCaptionLangs() {
+        if (!this.v || !this.ei)
+            throw new Error("Call getVideoInfo first.\nNot Found Video Info.");
+        try {
+            const captionLangs = await this.client.get(`https://www.youtube.com/api/timedtext?v=${this.v}${this.urlPath}&type=list`, { responseType: "text" });
+            const json = await (0, xml2js_1.parseStringPromise)(captionLangs.data);
+            const filtered = json.transcript_list.track.map((track) => {
+                return {
+                    lang_code: track.$.lang_code,
+                    lang_translated: track.$.lang_translated,
+                };
+            });
+            return {
+                sucess: true,
+                json: filtered,
+            };
+        }
+        catch (error) {
+            console.error(error);
             return {
                 success: false,
             };
@@ -76,4 +101,3 @@ class YoutubeClient {
     }
 }
 exports.default = YoutubeClient;
-//https://www.youtube.com/api/timedtext?v=cbqvxDTLMps&ei=4jrAZaX4IPHy7OsP8Jql2Ak&opi=112496729&xoaf=5&hl=ko&ip=0.0.0.0&ipbits=0&expire=1707122002&sparams=ip,ipbits,expire,v,ei,opi,xoaf&signature=AA6E0B3CF9AB77A6AD2BA57234BCCD9E025A5434.D05737E870D46527339DBD7E2590B1E3910D3388&key=yt8&lang=ja
