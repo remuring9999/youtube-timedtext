@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "exactOptionalPropertyTypes": true,
+    "lib": ["ES2021"],
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "noEmitOnError": true,
+    "noUnusedParameters": true,
+    "outDir": "dist",
+    "strict": true,
+    "target": "ES2021"
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,28 @@
+{
+  "name": "youtube-timedtext",
+  "version": "1.0.0",
+  "description": "Unofficial Youtube API Wrapper to fetch TimedText from Youtube",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node src/test.ts",
+    "build": "tsc",
+    "start": "tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "remuring9999",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/remuring9999/youtube-timedtext.git"
+  },
+  "bugs": {
+    "url": "https://github.com/remuring9999/youtube-timedtext/issues"
+  },
+  "homepage": "https://github.com/remuring9999/youtube-timedtext#readme"
+}
