@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const YoutubeClient_1 = __importDefault(require("./YoutubeClient"));
 (async () => {
     const client = new YoutubeClient_1.default();
-    await client.getVideoInfo("rDFUl2mHIW4");
-    //   console.log(await client.parseTimedText("ja"));
+    await client.getVideoInfo("fgSXAKsq-Vo");
+    console.log(await client.parseTimedText("ko"));
     console.log(await client.getCaptionLangs());
 })();
