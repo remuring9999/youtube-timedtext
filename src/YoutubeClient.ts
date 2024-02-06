@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { parseStringPromise } from "xml2js";
+import { TimedTextItem } from "./@types";
 
 class YoutubeClient {
   public client: AxiosInstance;
@@ -124,48 +125,28 @@ class YoutubeClient {
     }
   }
 
-  public async mergeTimedText(
-    timedText: { start: number; dur: number; text: string }[]
-  ) {
+  public async mergeTimedText(timedText: TimedTextItem[]) {
     if (!this.v || !this.ei)
       throw new Error("Call getVideoInfo first.\nNot Found Video Info.");
 
-    let merged = [];
-    let mergedText = "";
-    let mergedStart = 0;
-    let mergedDur = 0;
+    const merged: { [key: string]: TimedTextItem } = {};
 
-    for (let i = 0; i < timedText.length; i++) {
-      if (mergedText === "") {
-        mergedText = timedText[i].text;
-        mergedStart = timedText[i].start;
-        mergedDur = timedText[i].dur;
-      } else if (mergedText === timedText[i].text) {
-        mergedDur += timedText[i].dur;
+    for (const item of timedText) {
+      const key = item.text.trim(); //텍스트 값
+
+      if (merged[key]) {
+        //이미 존재하는 경우
+        merged[key].dur += item.dur;
+        merged[key].start += item.start;
       } else {
-        merged.push({
-          start: mergedStart,
-          dur: mergedDur,
-          text: mergedText,
-        });
-        mergedText = timedText[i].text;
-        mergedStart = timedText[i].start;
-        mergedDur = timedText[i].dur;
+        merged[key] = { ...item }; //객체 복사
       }
     }
 
-    if (mergedText !== "") {
-      merged.push({
-        start: mergedStart,
-        dur: mergedDur,
-        text: mergedText,
-      });
-
-      return {
-        success: true,
-        json: merged,
-      };
-    }
+    return {
+      success: true,
+      json: Object.values(merged),
+    };
   }
 }
 
