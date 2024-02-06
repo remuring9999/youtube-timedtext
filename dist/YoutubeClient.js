@@ -56,12 +56,15 @@ class YoutubeClient {
             throw new Error("Call getVideoInfo first.\nNot Found Video Info.");
         try {
             const timedText = await this.client.get(`https://www.youtube.com/api/timedtext?v=${this.v}${this.urlPath}&lang=${hl}&fmt=json3`, { responseType: "text" });
-            // console.log(timedText.data);
             const json = JSON.parse(timedText.data).events.map((event) => {
                 return {
                     start: event.tStartMs,
                     dur: event.dDurationMs,
-                    text: event.segs.map((seg) => seg.utf8).join(""),
+                    text: event.segs
+                        .map((seg) => seg.utf8)
+                        .join("")
+                        .replace(/[\r\n\t\u200b]/g, "")
+                        .replace(/\s/g, ""),
                 };
             });
             return {
@@ -102,45 +105,6 @@ class YoutubeClient {
             console.error(error);
             return {
                 success: false,
-            };
-        }
-    }
-    async mergeTimedText(timedText) {
-        if (!this.v || !this.ei)
-            throw new Error("Call getVideoInfo first.\nNot Found Video Info.");
-        let merged = [];
-        let mergedText = "";
-        let mergedStart = 0;
-        let mergedDur = 0;
-        for (let i = 0; i < timedText.length; i++) {
-            if (mergedText === "") {
-                mergedText = timedText[i].text;
-                mergedStart = timedText[i].start;
-                mergedDur = timedText[i].dur;
-            }
-            else if (mergedText === timedText[i].text) {
-                mergedDur += timedText[i].dur;
-            }
-            else {
-                merged.push({
-                    start: mergedStart,
-                    dur: mergedDur,
-                    text: mergedText,
-                });
-                mergedText = timedText[i].text;
-                mergedStart = timedText[i].start;
-                mergedDur = timedText[i].dur;
-            }
-        }
-        if (mergedText !== "") {
-            merged.push({
-                start: mergedStart,
-                dur: mergedDur,
-                text: mergedText,
-            });
-            return {
-                success: true,
-                json: merged,
             };
         }
     }
