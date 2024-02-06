@@ -74,7 +74,11 @@ class YoutubeClient {
         return {
           start: event.tStartMs,
           dur: event.dDurationMs,
-          text: event.segs.map((seg: any) => seg.utf8).join(""),
+          text: event.segs
+            .map((seg: any) => seg.utf8)
+            .join("")
+            .replace(/[\r\n\t\u200b]/g, "")
+            .replace(/\s/g, ""),
         };
       });
 
@@ -129,23 +133,45 @@ class YoutubeClient {
     if (!this.v || !this.ei)
       throw new Error("Call getVideoInfo first.\nNot Found Video Info.");
 
-    const merged: { [key: string]: TimedTextItem } = {};
+    let output = [];
+    let used = new Array(timedText.length).fill(false);
 
-    for (const item of timedText) {
-      const key = item.text.trim(); //텍스트 값
+    timedText = timedText.map((item) => {
+      return {
+        start: item.start,
+        dur: item.dur,
+        text: item.text.replace(/[\r\n\t\u200b]/g, ""),
+      };
+    });
 
-      if (merged[key]) {
-        //이미 존재하는 경우
-        merged[key].dur += item.dur;
-        merged[key].start += item.start;
-      } else {
-        merged[key] = { ...item }; //객체 복사
+    for (let nowSection = 0; nowSection < timedText.length; nowSection++) {
+      if (used[nowSection]) continue; // 이미 사용된 값은 건너뛴다
+
+      let nowItem = timedText[nowSection];
+
+      let newDur = nowItem.dur;
+      let newStart = nowItem.start;
+      let newText = nowItem.text;
+
+      for (let i = nowSection + 1; i < timedText.length; i++) {
+        if (timedText[i].text == nowItem.text) {
+          newDur += timedText[i].dur;
+          newText = nowItem.text;
+          newStart = nowItem.start;
+          used[i] = true; // 합산에 사용된 값을 표시한다
+        }
       }
+
+      output.push({
+        start: newStart,
+        dur: newDur,
+        text: newText,
+      });
     }
 
     return {
       success: true,
-      json: Object.values(merged),
+      json: output,
     };
   }
 }
