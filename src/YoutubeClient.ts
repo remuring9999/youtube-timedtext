@@ -69,8 +69,6 @@ class YoutubeClient {
         { responseType: "text" }
       );
 
-      // console.log(timedText.data);
-
       const json = JSON.parse(timedText.data).events.map((event: any) => {
         return {
           start: event.tStartMs,
