@@ -129,51 +129,51 @@ class YoutubeClient {
     }
   }
 
-  public async mergeTimedText(timedText: TimedTextItem[]) {
-    if (!this.v || !this.ei)
-      throw new Error("Call getVideoInfo first.\nNot Found Video Info.");
+  // public async mergeTimedText(timedText: TimedTextItem[]) {
+  //   if (!this.v || !this.ei)
+  //     throw new Error("Call getVideoInfo first.\nNot Found Video Info.");
 
-    let output = [];
-    let used = new Array(timedText.length).fill(false);
+  //   let output = [];
+  //   let used = new Array(timedText.length).fill(false);
 
-    timedText = timedText.map((item) => {
-      return {
-        start: item.start,
-        dur: item.dur,
-        text: item.text.replace(/[\r\n\t\u200b]/g, ""),
-      };
-    });
+  //   timedText = timedText.map((item) => {
+  //     return {
+  //       start: item.start,
+  //       dur: item.dur,
+  //       text: item.text.replace(/[\r\n\t\u200b]/g, ""),
+  //     };
+  //   });
 
-    for (let nowSection = 0; nowSection < timedText.length; nowSection++) {
-      if (used[nowSection]) continue; // 이미 사용된 값은 건너뛴다
+  //   for (let nowSection = 0; nowSection < timedText.length; nowSection++) {
+  //     if (used[nowSection]) continue; // 이미 사용된 값은 건너뛴다
 
-      let nowItem = timedText[nowSection];
+  //     let nowItem = timedText[nowSection];
 
-      let newDur = nowItem.dur;
-      let newStart = nowItem.start;
-      let newText = nowItem.text;
+  //     let newDur = nowItem.dur;
+  //     let newStart = nowItem.start;
+  //     let newText = nowItem.text;
 
-      for (let i = nowSection + 1; i < timedText.length; i++) {
-        if (timedText[i].text == nowItem.text) {
-          newDur += timedText[i].dur;
-          newText = nowItem.text;
-          newStart = nowItem.start;
-          used[i] = true; // 합산에 사용된 값을 표시한다
-        }
-      }
+  //     for (let i = nowSection + 1; i < timedText.length; i++) {
+  //       if (timedText[i].text == nowItem.text) {
+  //         newDur += timedText[i].dur;
+  //         newText = nowItem.text;
+  //         newStart = nowItem.start;
+  //         used[i] = true; // 합산에 사용된 값을 표시한다
+  //       }
+  //     }
 
-      output.push({
-        start: newStart,
-        dur: newDur,
-        text: newText,
-      });
-    }
+  //     output.push({
+  //       start: newStart,
+  //       dur: newDur,
+  //       text: newText,
+  //     });
+  //   }
 
-    return {
-      success: true,
-      json: output,
-    };
-  }
+  //   return {
+  //     success: true,
+  //     json: output,
+  //   };
+  // }
 }
 
 export default YoutubeClient;
